@@ -306,53 +306,53 @@ Date::setDate( const int serial )
     
     if ((serial >= SERIAL_MIN) && (serial <= SERIAL_MAX))
     {
-	    int yearStart;
-	    int dInYear;
-	    int daysCounted;
-		int day;
-		int month;
-		int year;
+	int yearStart;
+	int dInYear;
+	int daysCounted;
+	int day;
+	int month;
+	int year;
 	    
-	    daysCounted = 0;
-	    month       = 0;
+	daysCounted = 0;
+	month       = 0;
 		
         m_serial = rollSerial( serial );
         
-	    year = int(double(m_serial) / 365.2425) - (m_serial < 0);
+	year = int(double(m_serial) / 365.2425) - (m_serial < 0);
         
         yearStart = yearAsSerial(year + TABLE_MIN);
         
-		if (m_serial < yearStart)
-		    yearStart = yearAsSerial(--year + TABLE_MIN);
+	if (m_serial < yearStart)
+	    yearStart = yearAsSerial(--year + TABLE_MIN);
 		
-		dInYear = m_serial - yearStart;         
+	dInYear = m_serial - yearStart;         
 	    year += TABLE_MIN;                              
 		
-		if (Date::isLeapYear(year))                      
+	if (Date::isLeapYear(year))                      
         {
             // days must be between 0 and 365
             do
             {
-				daysCounted += m_leapDaysPerMonth[month];
-				++month;
-		    }
-		    while ((daysCounted <= dInYear) && (month < 12));
+		daysCounted += m_leapDaysPerMonth[month];
+		++month;
+	    }
+	    while ((daysCounted <= dInYear) && (month < 12));
 		    
             daysCounted -= m_leapDaysPerMonth[month-1];
-	    }
-	    else
+	}
+	else
         { 
             // days must be between 0 and 364
             do
             {
-				daysCounted += m_daysPerMonth[month];
-				++month;
-		    }
-		    while ((daysCounted <= dInYear) && (month < 12));
+		daysCounted += m_daysPerMonth[month];
+		++month;
+            }
+	    while ((daysCounted <= dInYear) && (month < 12));
 		    
             daysCounted -= m_daysPerMonth[month-1];
-	    }
-	    day = dInYear - daysCounted + 1;
+	}
+	day = dInYear - daysCounted + 1;
         
         assert(valid(day, month, year));
         
@@ -412,151 +412,151 @@ Date::setDate( const std::string& dateString, const std::string& format )
 	
 	const char *datestr = dateString.c_str();
 	
-    bool finished = false;
+   	bool finished = false;
 	while( !finished )
 	{
 		switch( state )
 		{
-			case START:
-				if (format[idx] == 'D')
-				{
-                    ++idx;
-					state = DAY2;
-                    break;
-				}
-				if (format[idx] == 'M')
-				{
-                    ++idx;
-					state = MONTH2;
-                    break;
-				}
-				if (format[idx] == 'Y') 
-				{
-                    ++idx;
-					state = YEAR2;
-                    break;
-				}
-                state = FAIL;
-				break;
+                        case START:
+                                if (format[idx] == 'D')
+                                {
+                                        ++idx;
+                                        state = DAY2;
+                                         break;
+                                }
+                                if (format[idx] == 'M')
+                                {
+                                        ++idx;
+                                        state = MONTH2;
+                                        break;
+                                }
+                                if (format[idx] == 'Y') 
+                                {
+                                        ++idx;
+                                        state = YEAR2;
+                                        break;
+                                }
+                                state = FAIL;
+                                break;
 			case DAY2:
-                if (format[idx] == 'D')
+                                if (format[idx] == 'D')
 				{		
-                    ++idx;
-                    int digits;
-                    if (std::sscanf( datestr, "%2d%n", &day, &digits ))
-                    {
-                        state = DELIM;
-                        datestr += digits;
-                        break;
-                    }
+                                        ++idx;
+                                        int digits;
+                                        if (std::sscanf( datestr, "%2d%n", &day, &digits ))
+                                        {
+                                                state = DELIM;
+                                                datestr += digits;
+                                                break;
+                                        }
 				} 
-                state = FAIL;
+                                state = FAIL;
 				break;
 			case MONTH2:
 				if (format[idx] == 'M')
 				{
 					++idx;
 					state = MONTH3;
-                    break;
+                                         break;
 				}
-                state = FAIL;
+                                state = FAIL;
 				break;
 			case MONTH3:
 				if (format[idx] == 'M')
 				{
-                    ++idx;
+                                        ++idx;
 					char buff[4];
 					if (std::sscanf( datestr, "%3s",  buff ))
 					{
-                        buff[0] = char(std::toupper(buff[0])); // This should match our month names
-                        buff[1] = char(std::tolower(buff[1]));
-                        buff[2] = char(std::tolower(buff[2]));
-                        buff[3] = '\0';
+                                                buff[0] = char(std::toupper(buff[0])); // This should match our month names
+                                                buff[1] = char(std::tolower(buff[1]));
+                                                buff[2] = char(std::tolower(buff[2]));
+                                                buff[3] = '\0';
                         
-                        for(month = 1; month <= 12; ++month)
-                        {
-                            if(!std::strncmp(buff, m_monthNames[month], 3))
-                            {
-                                break;
-                            }
-                        }
+                                                for(month = 1; month <= 12; ++month)
+                                                {
+                                                        if(!std::strncmp(buff, m_monthNames[month], 3))
+                                                        {
+                                                                break;
+                                                        }
+                                                }
                         
-                        if (month <= 12)
-                        {
-                            state = DELIM;
-                            datestr += 3;
-                            break;
-                        }
-                    }
+                                                if (month <= 12)
+                                                {
+                                                    state = DELIM;
+                                                    datestr += 3;
+                                                    break;
+                                                }
+                                         }
 				}
-                else
-                {
-                    int digits;
-                    if (std::sscanf( datestr, "%2d%n", &month, &digits ))
-                    {
-                        state = DELIM;
-                        datestr += digits;
-                        break;
-                    }
-                }
-                state = FAIL;
-                break;
+                                else
+                                {
+                                    int digits;
+                                    if (std::sscanf( datestr, "%2d%n", &month, &digits ))
+                                    {
+                                        state = DELIM;
+                                        datestr += digits;
+                                        break;
+                                    }
+                                }
+                                state = FAIL;
+                                break;
 			case YEAR2:
 				if (format[idx] == 'Y')
 				{
 					++idx;
 					state = YEAR3;
-                    break;
+                                        break;
 				}
-                state = FAIL;
+                                state = FAIL;
 				break;
 			case YEAR3:
 				if (format[idx] == 'Y')
 				{
 					++idx;
 					state = YEAR4;
-                    break;
+                                        break;
 				}
-                if (std::sscanf(datestr, "%2d", &year))
-                {
-                    if( (year > 0) && (year < 70) )
-                        year += 2000;
-                    else if( year < 100 )
-                        year += TABLE_MIN;
-                    
-                    state = DELIM;
-                    datestr += 2;
-                    break;
-                }
-                state = FAIL;
+                                if (std::sscanf(datestr, "%2d", &year))
+                                {
+                                    if( (year > 0) && (year < 70) )
+                                        year += 2000;
+                                    else if( year < 100 )
+                                        year += TABLE_MIN;
+
+                                    state = DELIM;
+                                    datestr += 2;
+                                    break;
+                                }
+                                state = FAIL;
 				break;
 			case YEAR4:
 				if (format[idx] == 'Y')
 				{
-					++idx;
-                    if (std::sscanf( datestr, "%4d",  &year ))
-                    {
-                        datestr += 4;
-                        state = DELIM;
-                        break;
-                    }
+				        ++idx;
+                                        if (std::sscanf( datestr, "%4d",  &year ))
+                                        {
+                                                datestr += 4;
+                                                state = DELIM;
+                                                break;
+                                        }
 				}
-                state = FAIL;
+                                state = FAIL;
 				break;
 			case DELIM:
-                if (format[idx] == '\0')
-				{
-				    finished = true;
-                    break;
-				}
-                if (format[idx] == *datestr)
-                {
-                    ++datestr;
-                    ++idx;
-                    state = START;
-                    break;
-                }
-                state = FAIL;
+                                if (format[idx] == '\0')
+                                {
+                                    finished = true;
+                                    break;
+                                }
+                                if (format[idx] == *datestr)
+                                {
+                                    ++datestr;
+                                    ++idx;
+                                    state = START;
+                                    break;
+                                }
+                                state = FAIL;
 				break;
 			case FAIL:
 				std::cout << "Date: Bad format " << format << " for " << dateString << std::endl;
@@ -758,7 +758,7 @@ Date::addMonths( const int months )
         d = dim;
     }
     
-	return setDate(d, m, y);
+    return setDate(d, m, y);
 }
 
 
@@ -795,7 +795,7 @@ Date::isLeapYear( void ) const
 bool 
 Date::isWeekend( void ) const
 {
-	int dow = dayNumber();
+    int dow = dayNumber();
 	
     return (dow == Saturday || dow == Sunday);
 }
@@ -862,7 +862,7 @@ Date::next( const Day d )
             dow = julianDayNumber(jd);
         }
     }
-	return setDate(serial);
+    return setDate(serial);
 }
 
 
@@ -895,7 +895,7 @@ Date::prev( const Day d )
             dow = julianDayNumber(jd);
         }
     }
-	return setDate(serial);
+    return setDate(serial);
 }
 
 
@@ -928,7 +928,7 @@ Date::nextWeekDay( void )
             dow = julianDayNumber(jd); 
         }
     }
-	return setDate(serial);
+    return setDate(serial);
 }
 
 
@@ -961,7 +961,7 @@ Date::prevWeekDay( void )
             dow = julianDayNumber(jd); 
         }
     }
-	return setDate(serial);
+    return setDate(serial);
 }
 
 bool
@@ -983,14 +983,14 @@ Date::setToSystemDate( void )
 bool 
 Date::setDate( const Date& date )
 {
-    assert(date.valid());
+         assert(date.valid());
 	
-	m_day    = date.m_day;
-	m_month  = date.m_month;
-	m_year   = date.m_year;
-	m_serial = date.m_serial;
+        m_day    = date.m_day;
+        m_month  = date.m_month;
+        m_year   = date.m_year;
+        m_serial = date.m_serial;
 	
-    return valid();
+        return valid();
 }
 
 
@@ -1067,14 +1067,14 @@ Date::gregorian( const long gn )
     m_year   = 0;
     m_serial = 0;
     
-	if (gn > 0) // this code does not work with negative Gregorian numbers
+    if (gn > 0) // this code does not work with negative Gregorian numbers
     {
 	    long yearStart;
 	    int dInYear;
 	    int daysCounted;
-		int day;
-		int month;
-		int year;
+            int day;
+	    int month;
+	    int year;
 	    
 	    daysCounted = 0;
 	    month       = 0;
@@ -1083,36 +1083,36 @@ Date::gregorian( const long gn )
 		
 	    yearStart = gregorian(1, 1, year);
 	    
-		if (gn < yearStart)
-        {
+	    if (gn < yearStart)
+            {
 		    yearStart = gregorian(1, 1, --year);
 	    }
 		
-        dInYear = int(gn - yearStart);                                      
+            dInYear = int(gn - yearStart);                                      
 		
-		if (Date::isLeapYear( year ))                      
-        {
-            // days must be between 0 and 365
-            do
+	    if (Date::isLeapYear( year ))                      
             {
-				daysCounted += m_leapDaysPerMonth[month];
-				++month;
-		    }
-		    while ((daysCounted <= dInYear) && (month < 12));
+                // days must be between 0 and 365
+                do
+                {
+                        daysCounted += m_leapDaysPerMonth[month];
+                        ++month;
+		 }
+		 while ((daysCounted <= dInYear) && (month < 12));
 		    
             daysCounted -= m_leapDaysPerMonth[month-1];
 	    }
 	    else
-        { 
+            { 
             // days must be between 0 and 364
-            do
-            {
-				daysCounted += m_daysPerMonth[month];
-				++month;
-		    }
-		    while ((daysCounted <= dInYear) && (month < 12));
+                do
+                {
+                        daysCounted += m_daysPerMonth[month];
+                        ++month;
+		}
+		while ((daysCounted <= dInYear) && (month < 12));
 		    
-            daysCounted -= m_daysPerMonth[month-1];
+                daysCounted -= m_daysPerMonth[month-1];
 	    }
 	    
         day = dInYear - daysCounted + 1;				
@@ -1158,19 +1158,19 @@ Date::toString( const std::string& format ) const
 				{
 					state = DAY2;
 					++idx;
-                    break;
+                                        break;
 				}
 				if (format[idx] == 'M')
 				{
 					state = MONTH2;
 					++idx;
-                    break;
+                                        break;
 				}
 				if (format[idx] == 'Y') 
 				{
 					state = YEAR2;
 					++idx;
-                    break;
+                                         break;
 				}
 				state = FAIL;
 				break;
@@ -1179,22 +1179,22 @@ Date::toString( const std::string& format ) const
 				{
 					++idx;
 					state = DAY3;
-                    break;
+                                        break;
 				}
 				state = FAIL;
 				break;
 			case DAY3:
 				if (format[idx] == 'D')
 				{
-                    ++idx;
+                                         ++idx;
 					sprintf( datestr, "%3s",  dayName().c_str() );
-                    datestr += 3;
+                                        datestr += 3;
 				}
 				else
-                {
-                    sprintf( datestr, "%02d", day() );
-                    datestr += 2;
-                }
+                                {
+                                    sprintf( datestr, "%02d", day() );
+                                    datestr += 2;
+                                }
 				state = DELIM;
 				break;
 			case MONTH2:
@@ -1202,7 +1202,7 @@ Date::toString( const std::string& format ) const
 				{
 					++idx;
 					state = MONTH3;
-                    break;
+                                        break;
 				}
 				state = FAIL;
 				break;
@@ -1211,7 +1211,7 @@ Date::toString( const std::string& format ) const
 				{
 					++idx;
 					sprintf( datestr, "%3s",  monthName().c_str() );
-                    datestr += 3;
+                                         datestr += 3;
 				}
 				else
 				{
@@ -1225,7 +1225,7 @@ Date::toString( const std::string& format ) const
 				{
 					++idx;
 					state = YEAR3;
-                    break;
+                                        break;
 				}
 				state = FAIL;
 				break;
@@ -1237,9 +1237,9 @@ Date::toString( const std::string& format ) const
 				}
 				else
 				{
-                    int y = year() - ((year() / 100) * 100);
+                                        int y = year() - ((year() / 100) * 100);
 					sprintf(datestr, "%02d", y);
-                    datestr += 2;
+                                        datestr += 2;
 					state = DELIM;
 				}
 				break;
@@ -1247,18 +1247,18 @@ Date::toString( const std::string& format ) const
 				if (format[idx] == 'Y')
 				{
 					++idx;
-                    int width = 4 + (m_year < 0);
-                    sprintf( datestr, "%0*d", width, year() );
-                    datestr += width;
+                                        int width = 4 + (m_year < 0);
+                                        sprintf( datestr, "%0*d", width, year() );
+                                        datestr += width;
 					state = DELIM;
-                    break;
+                                        break;
 				}
 				state = FAIL;
 				break;
 			case DELIM:
 			    if (format[idx] == '\0')
 				{
-                    *datestr = '\0';
+                                    *datestr = '\0';
 				    finished = true;
 				}
 				else
@@ -1301,7 +1301,7 @@ Date::setCalendar( const Calendar cal )
 // static method sets static pointers to the appropriate calendar
 {
 	switch(cal)
-    { 
+        { 
 		case STANDARD:
 			m_pYearStart     = Date::m_yearStart;
 			m_pLeapYear      = Date::m_leapYear;
