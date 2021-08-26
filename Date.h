@@ -83,8 +83,8 @@ class Date
 {
 public:
 
-    // default to STANDARD; Note the value is used in dayNumber calculations, do not alter
-    enum Calendar { STANDARD = 0, EXCEL = 1  }; 
+    	// default to STANDARD; Note the value is used in dayNumber calculations, do not alter
+    	enum Calendar { STANDARD = 0, EXCEL = 1  }; 
 
     
 	enum Day { Sun = 1, Sunday = 1, Mon = 2, Monday = 2, Tue = 3, Tuesday = 3,
@@ -95,7 +95,7 @@ public:
 		Oct = 10, October = 10, Nov = 11, November = 11, Dec = 12, December = 12 };	
 
 
-	Date(void): m_day(0), m_month(0), m_year(0), m_serial(0) {}	                      
+	Date(void): m_day(0), m_month(0), m_year(0), m_serial(0)=default	                      
 
 	Date(const int d, const int m, const int y): m_day(0), m_month(0), m_year(0), m_serial(0)
 	{
@@ -123,14 +123,14 @@ public:
 	
 	~Date() { m_day = 0; m_month = 0; m_year = 0; m_serial = 0; }	
 
-    // set date functions return true on success
+        // set date functions return true on success
 	bool 		        
 	setDate( const Date& d );
 	
 	bool       
 	setDate( const int day, const int month, const int year );
     
-    // get/set methods for serial numbers, 1/1/1900 = 1, 2/1/1900 = 2, ... ,
+        // get/set methods for serial numbers, 1/1/1900 = 1, 2/1/1900 = 2, ... ,
 	bool        
 	setDate( const int serial );
     
@@ -145,14 +145,14 @@ public:
 	bool
 	setDate( const std::string& dateStr )
 	// assumes ISO convention, that is YYYY-DD-MM
-    // will match on any char delimiter i.e. YYYY/DD/MM or YYYY-DD-MM
+        // will match on any char delimiter i.e. YYYY/DD/MM or YYYY-DD-MM
 	{
 		int d = 0, m = 0, y = 0;
-        std::sscanf(dateStr.c_str(), "%d%*c%d%*c%d", &y, &m, &d);
+            	std::sscanf(dateStr.c_str(), "%d%*c%d%*c%d", &y, &m, &d);
 		return setDate(d, m, y);
 	}
     
-    void        
+    	void        
 	clear( void );
 		
 	int // i.e. 1 to 31                
@@ -164,11 +164,11 @@ public:
 	int // i.e. -4713 to 9999                
 	year( void ) const { return m_year; }                
 
-    int  // i.e. Sun = 1 to Sat = 7 
-    dayNumber( void ) const; 
+    	int  // i.e. Sun = 1 to Sat = 7 
+    	dayNumber( void ) const; 
     
-    std::string 
-    dayName( void ) const;
+    	std::string 
+    	dayName( void ) const;
 	
 	std::string               
 	monthName( void ) const;  
@@ -177,8 +177,8 @@ public:
 	const Date  operator+( const int d ) const;
 	const Date  operator-( const int d ) const;
 	int         operator-( const Date& d ) const;
-	Date&		operator+=( const int d );
-	Date&		operator-=( const int d );
+	Date&	    operator+=( const int d );
+	Date&	    operator-=( const int d );
 	Date&       operator++( void );        // prefix
 	Date&       operator--( void );        // prefix
 	Date        operator++( const int d ); // postfix
@@ -251,11 +251,11 @@ public:
 	bool  // we only handle positive Julian numbers             
 	julian( const long j );
 
-    long              
+    	long              
 	gregorian( void ) const { return gregorian(m_day, m_month, m_year); } 
     
-    bool  // we only handle positive Gregorian numbers 
-    gregorian( const long gn );
+    	bool  // we only handle positive Gregorian numbers 
+    	gregorian( const long gn );
     
 	// format string can employ DD, DDD, MM, MMM, YY, YYYY and single char delimiter i.e '-', '/' etc
 	// the delimiter is copied from the format string i.e. DD/MMM/YY writes 09/Jul/68 
@@ -273,11 +273,11 @@ public:
 	}
 	
 	//
-    // static Date members
-    //
+    	// static Date members
+    	//
 	// EXCEL or STANDARD serial numbers; Julian unaffected
 	// Not thread safe. Do not change Calendar mid-computation as old calendar dates will become incorrect
-    //
+    	//
 	static void                
 	setCalendar( const Calendar cal ); 
 		
@@ -319,22 +319,22 @@ public:
 	static int	// look up value from table or calculate otherwise
 	yearAsSerial( const int year );
 	
-    static int
-    lastDayOfMonth( int month, int year );
+    	static int
+    	lastDayOfMonth( int month, int year );
     
-    static long // (1, Jan, 0001) where 0001 is 1 AD is gregorian = 1
-    gregorian( int day, int month, int year );
+    	static long // (1, Jan, 0001) where 0001 is 1 AD is gregorian = 1
+   	 gregorian( int day, int month, int year );
     
-    static long // (2, Jan, -4713) is julian = 1              
+    	static long // (2, Jan, -4713) is julian = 1              
 	julian( int day, int month, int year );
     
 	// date validation
                                     
 	static bool 
-    valid( const int day, const int month, const int year )
-    {
-        return ((day >= 1) && (day <= Date::daysInMonth(month, year)) && (month >= 1) && (month <= 12) && (year >= -4713) && (year <= 9999));
-    }
+   	valid( const int day, const int month, const int year )
+    	{
+        	return ((day >= 1) && (day <= Date::daysInMonth(month, year)) && (month >= 1) && (month <= 12) && (year >= -4713) && (year <= 9999));
+	}
     
 	bool                
 	valid( void ) const { return (m_day != 0); }  
@@ -342,11 +342,11 @@ public:
 	friend std::ostream& 
 	operator<<( std::ostream& strm, const Date& date );
 	
-    friend std::istream& 
+    	friend std::istream& 
 	operator>>( std::istream& strm, Date& date );
 
 	//static void
-    //printTables( void );
+    	//printTables( void );
     
 private:
 	          
@@ -357,17 +357,17 @@ private:
 		return  int(s / 7) * 5 + std::min(int(s % 7), 4);
 	}
     
-    // the US Julian day number 
-    // returns Sun = 1 to Sat = 7 
-    // (see https://en.wikipedia.org/wiki/Julian_day#Finding_day_of_week_given_Julian_day_number)
-    int  
-    julianDayNumber( const long jd ) const { return int((1 + jd) % 7) + 1; } 
+    	// the US Julian day number 
+    	// returns Sun = 1 to Sat = 7 
+    	// (see https://en.wikipedia.org/wiki/Julian_day#Finding_day_of_week_given_Julian_day_number)
+    	int  
+    	julianDayNumber( const long jd ) const { return int((1 + jd) % 7) + 1; } 
     
-    int  // i.e. Sun = 1 to Sat = 7 
-    gregorianDayNumber( const int gd ) const  { return ((gd - m_calAdjustment) % 7) + 1; }
+    	int  // i.e. Sun = 1 to Sat = 7 
+   	gregorianDayNumber( const int gd ) const  { return ((gd - m_calAdjustment) % 7) + 1; }
     
-    int
-    rollSerial( const int serial ) const;
+    	int
+    	rollSerial( const int serial ) const;
     
 		
 	int   m_serial;
