@@ -53,7 +53,7 @@
  
  Date::setCalendar( Date::EXCEL );
  Date st(31,12,2149);	 
- cout << st.tostd::string("DDD-DD-MM-YYYY") << endl;
+ cout << st.toString("DDD-DD-MM-YYYY") << endl;
  cout << st.serial() << endl;
  exit(1);
  
@@ -121,7 +121,7 @@ public:
 		setDate(serial);
 	}
 	
-	~Date() { m_day = 0; m_month = 0; m_year = 0; m_serial = 0; }	
+	~Date(void) { m_day = 0; m_month = 0; m_year = 0; m_serial = 0; }	
 
         // set date functions return true on success
 	bool 		        
@@ -268,7 +268,7 @@ public:
 	toString( void ) const
 	{
 		char buff[16];
-        std::sprintf( buff, "%0*d-%02d-%02d", 4 + (m_year < 0), year(), month(), day() );
+        	std::sprintf( buff, "%0*d-%02d-%02d", 4 + (m_year < 0), year(), month(), day() );
 		return buff;
 	}
 	
@@ -323,7 +323,7 @@ public:
     	lastDayOfMonth( int month, int year );
     
     	static long // (1, Jan, 0001) where 0001 is 1 AD is gregorian = 1
-   	 gregorian( int day, int month, int year );
+   	gregorian( int day, int month, int year );
     
     	static long // (2, Jan, -4713) is julian = 1              
 	julian( int day, int month, int year );
